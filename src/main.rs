@@ -9,6 +9,8 @@ use teloxide::types::ParseMode::MarkdownV2;
 use binance::api::*;
 use binance::market::*;
 
+use rand::prelude::*;
+
 fn to_uppercase(string: &str) -> String {
     string.chars().map(|c| c.to_ascii_uppercase()).collect()
 }
@@ -17,12 +19,16 @@ fn to_uppercase(string: &str) -> String {
 #[derive(BotCommand)]
 #[command(rename = "lowercase", description = "These commands are supported:")]
 enum Command {
-  #[command(description = "display this text.")]
-  Help,
-  #[command(description = "show a Binance sign up page.")]
-  Register,
-  #[command(description = "show a cryptcurrency price in USDT by default.")]
-  Price(String),
+    #[command(description = "display this text.")]
+    Help,
+    #[command(description = "say hello.")]
+    Start,
+    #[command(description = "random choose amoung option")]
+    Random(String),
+    #[command(description = "show a Binance sign up page.")]
+    Register,
+    #[command(description = "show a cryptcurrency price in USDT by default.")]
+    Price(String),
 }
 
 async fn responses_to_command(
@@ -32,15 +38,27 @@ async fn responses_to_command(
     let market: Market = Binance::new(None, None);
 
     match command {
-        // 1.
         Command::Help => cx.answer(Command::descriptions()).send().await?, 
-        // 2.
+
+        Command::Start => cx.answer("Hi?").send().await?,
+
+        Command::Random(option_list) => {
+            let option_list = option_list.split(" ").collect::<Vec<&str>>();
+            let option_size = option_list.len();
+            let random_index = rand::thread_rng().gen_range(0..option_size);
+            if let Some(&result) = option_list.get(random_index) {
+                cx.answer(result).send().await?
+            } else {
+                cx.answer("🤯").send().await?
+            }
+        }
+
         Command::Register => {
             let register_link = link("https://www.binance.com/en/activity/referral/offers/claim?ref=CPA_00WX9M3F3T", "Don't have a Binance account yet? You can register here\\.");
 
             cx.answer(register_link).parse_mode(MarkdownV2).send().await?
         },
-        // 3.
+
         Command::Price(crpytocurrency) => {
             let mut iter = crpytocurrency.split_whitespace();
 
