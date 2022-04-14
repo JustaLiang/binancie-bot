@@ -36,6 +36,7 @@ async fn responses_to_command(
     command: Command,
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
     let market: Market = Binance::new(None, None);
+    let error_reply = "🤯"; 
 
     match command {
         Command::Help => cx.answer(Command::descriptions()).send().await?, 
@@ -45,12 +46,18 @@ async fn responses_to_command(
         Command::Random(option_list) => {
             let option_list = option_list.split(" ").collect::<Vec<&str>>();
             let option_size = option_list.len();
-            let random_index = rand::thread_rng().gen_range(0..option_size);
-            if let Some(&result) = option_list.get(random_index) {
-                cx.answer(result).send().await?
-            } else {
-                cx.answer("🤯").send().await?
+            match option_size {
+                0 | 1 => cx.answer(error_reply).send().await?,
+                _ => {
+                    let random_index = rand::thread_rng().gen_range(0..option_size);
+                    if let Some(&result) = option_list.get(random_index) {
+                        cx.answer(result).send().await?
+                    } else {
+                        cx.answer(error_reply).send().await?
+                    }
+                }
             }
+
         }
 
         Command::Register => {
