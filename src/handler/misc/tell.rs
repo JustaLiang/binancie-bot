@@ -10,7 +10,7 @@ use crypto::{
 fn get_hash_vector(string: &str) -> Vec<f32> {
     let mut hasher = Sha3::keccak256();
     let string = format!("{:?}", SystemTime::now()) + string;
-    hasher.input_str(&string[..]);
+    hasher.input_str(&string);
     let mut byte_array: [u8; 13] = [0; 13];
     hasher.result(&mut byte_array);
     byte_array.iter().map(|&b| (b as f32) - 127.5).collect()

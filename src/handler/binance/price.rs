@@ -24,7 +24,11 @@ pub fn reply(crpytocurrency: String) -> String {
 
         match market.get_price(target) {
             Ok(symbol_price) => {
-                format!("The price you want is {:#?}. ", &symbol_price.price)
+                format!("{}/{}: {:#?}",
+                    to_uppercase(&first_crypto_symbol),
+                    to_uppercase(&second_crypto_symbol),
+                    &symbol_price.price
+                )
             },
             Err(e) => {
                 log::error!("{:#?}", e);
@@ -32,6 +36,6 @@ pub fn reply(crpytocurrency: String) -> String {
             },
         }
     } else {
-        "Cryptocurrency symbols were not specified. To start with, you can use /price ETH or /price ETH USDT.".into()
+        "🤯".into()
     }
 }

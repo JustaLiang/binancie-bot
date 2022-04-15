@@ -1,10 +1,7 @@
 use dotenv::dotenv;
-use std::{
-    env,
-    error::Error,
-};
+use std::error::Error;
 
-use teloxide::{payloads::SendMessageSetters, prelude::*};
+use teloxide::prelude::*;
 use teloxide::utils::command::BotCommand;
 use teloxide::types::ParseMode::MarkdownV2;
 
@@ -58,11 +55,6 @@ async fn responses_to_command(
     Ok(())
 }
 
-#[tokio::main]
-async fn main() {
-    run().await;
-}
-
 async fn run() {
     dotenv().ok();
 
@@ -73,4 +65,9 @@ async fn run() {
     let bot_name: String = "binancie".into();
 
     teloxide::commands_repl(bot, bot_name, responses_to_command).await;
+}
+
+#[tokio::main]
+async fn main() {
+    run().await;
 }
