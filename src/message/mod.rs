@@ -1,5 +1,5 @@
-pub mod binance;
-pub mod misc;
+mod binance;
+mod misc;
 
 use std::error::Error;
 use teloxide::prelude2::*;
@@ -37,47 +37,58 @@ pub async fn handler(
     if let Some(text) = msg.text() {
         match BotCommand::parse(text, "BinanceBot") {
             Ok(Command::Help) |
-            Ok(Command::Start)
-            => bot.send_message(
+            Ok(Command::Start) => {
+                bot.send_message(
                 msg.chat.id,
                 Command::descriptions()
-            ).send().await?, 
+                ).send().await?;
+            }, 
     
-            Ok(Command::Random(option_list))
-            => bot.send_message(
+            Ok(Command::Random(option_list)) => {
+                bot.send_message(
                 msg.chat.id,
                 misc::random::reply(option_list)
-            ).send().await?,
+                ).send().await?;
+            },
     
-            Ok(Command::Shuffle(option_list))
-            => bot.send_message(
+            Ok(Command::Shuffle(option_list)) => {
+                bot.send_message(
                 msg.chat.id,
                 misc::shuffle::reply(option_list)
-            ).send().await?,
+                ).send().await?;
+            },
     
-            Ok(Command::Tell(question_options))
-            => bot.send_message(
+            Ok(Command::Tell(question_options)) => {
+                bot.send_message(
                 msg.chat.id,
                 misc::tell::reply(question_options)
-            ).send().await?,
+                ).send().await?;
+            },
     
-            Ok(Command::Register)
-            => bot.send_message(
+            Ok(Command::Register) => {
+                bot.send_message(
                 msg.chat.id,
                 binance::register::reply()
-            ).parse_mode(MarkdownV2).send().await?,
+                ).parse_mode(MarkdownV2).send().await?;
+            },
     
-            Ok(Command::Price(crpytocurrency))
-            => bot.send_message(
+            Ok(Command::Price(crpytocurrency)) => {
+                bot.send_message(
                 msg.chat.id,
                 binance::price::reply(crpytocurrency)
-            ).send().await?,
+                ).send().await?;
+            },
 
-            Err(_)
-            => bot.send_message(
-                msg.chat.id,
-                "unsupported command"
-            ).send().await?,
+            Err(_) => {
+                match misc::default::reply() {
+                    Some(button) => {
+                        bot
+                        .send_message(msg.chat.id, "mining reward")
+                        .reply_markup(button).await?;
+                    },
+                    None => {},
+                };
+            }
         };
     }
 
