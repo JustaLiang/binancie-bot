@@ -30,7 +30,7 @@ enum Command {
     Price(String),
 }
 
-pub async fn message_handler(
+pub async fn handler(
     msg: Message,
     bot: AutoSend<Bot>,
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
