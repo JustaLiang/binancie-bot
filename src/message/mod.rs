@@ -31,7 +31,7 @@ enum Command {
     #[command(description = "show a cryptcurrency price in USDT by default")]
     Price(String),
     #[command(description = "show an average price of a Binance symbol")]
-    Average(String),
+    AvgPrice(String),
 }
 
 pub async fn handler(
@@ -90,10 +90,10 @@ pub async fn handler(
                 ).send().await?;
             },
 
-            Ok(Command::Average(crpytocurrency)) => {
+            Ok(Command::AvgPrice(crpytocurrency)) => {
                 bot.send_message(
                 msg.chat.id,
-                binance::average::reply(crpytocurrency)
+                binance::avg_price::reply(crpytocurrency)
                 ).send().await?;
             },
 

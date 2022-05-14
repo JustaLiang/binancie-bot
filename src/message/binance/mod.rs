@@ -1,3 +1,3 @@
 pub mod register;
 pub mod price;
-pub mod average;
+pub mod avg_price;
