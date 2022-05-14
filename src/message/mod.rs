@@ -22,12 +22,16 @@ enum Command {
     Shuffle(String),
     #[command(description = "tell the answer: [question]? [option1] [option2] ...")]
     Tell(String),
+    #[command(description = "convert to lowercase: [text]")]
+    Lowercase(String),
 
     // Binance
     #[command(description = "show a Binance sign up page")]
     Register,
     #[command(description = "show a cryptcurrency price in USDT by default")]
     Price(String),
+    #[command(description = "show an average price of a Binance symbol")]
+    Average(String),
 }
 
 pub async fn handler(
@@ -64,7 +68,14 @@ pub async fn handler(
                 misc::tell::reply(question_options)
                 ).send().await?;
             },
-    
+
+            Ok(Command::Lowercase(text)) => {
+                bot.send_message(
+                msg.chat.id,
+                misc::lowercase::reply(text)
+                ).send().await?;
+            },
+
             Ok(Command::Register) => {
                 bot.send_message(
                 msg.chat.id,
@@ -76,6 +87,13 @@ pub async fn handler(
                 bot.send_message(
                 msg.chat.id,
                 binance::price::reply(crpytocurrency)
+                ).send().await?;
+            },
+
+            Ok(Command::Average(crpytocurrency)) => {
+                bot.send_message(
+                msg.chat.id,
+                binance::average::reply(crpytocurrency)
                 ).send().await?;
             },
 
