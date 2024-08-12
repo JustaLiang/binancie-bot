@@ -11,29 +11,30 @@ pub fn reply(crpytocurrency: String) -> String {
     let mut iter = crpytocurrency.split_whitespace();
 
     if let Some(first_crypto_symbol) = iter.next() {
-
         let second_crypto_symbol = if let Some(second_crypto_symbol) = iter.next() {
             second_crypto_symbol
         } else {
             "USDT"
         };
 
-        let target = to_uppercase(
-            &format!("{}{}", &first_crypto_symbol, &second_crypto_symbol)
-        );
+        let target = to_uppercase(&format!(
+            "{}{}",
+            &first_crypto_symbol, &second_crypto_symbol
+        ));
 
         match market.get_price(target) {
             Ok(symbol_price) => {
-                format!("{}/{}: {:#?}",
+                format!(
+                    "{}/{}: {:#?}",
                     to_uppercase(&first_crypto_symbol),
                     to_uppercase(&second_crypto_symbol),
                     &symbol_price.price
                 )
-            },
+            }
             Err(e) => {
                 log::error!("{:#?}", e);
                 format!("Something went wrong. Did you use the correct cryptocurrency pair?")
-            },
+            }
         }
     } else {
         "🤯".into()

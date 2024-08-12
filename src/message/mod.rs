@@ -3,8 +3,8 @@ mod misc;
 
 use std::error::Error;
 use teloxide::prelude2::*;
-use teloxide::utils::command::BotCommand;
 use teloxide::types::ParseMode::MarkdownV2;
+use teloxide::utils::command::BotCommand;
 
 // Command examples
 #[derive(BotCommand)]
@@ -32,70 +32,60 @@ enum Command {
     Price(String),
 }
 
-pub async fn handler(
-    msg: Message,
-    bot: AutoSend<Bot>,
-) -> Result<(), Box<dyn Error + Send + Sync>> {
+pub async fn handler(msg: Message, bot: AutoSend<Bot>) -> Result<(), Box<dyn Error + Send + Sync>> {
     if let Some(text) = msg.text() {
         match BotCommand::parse(text, "BinanceBot") {
-            Ok(Command::Help) |
-            Ok(Command::Start) => {
-                bot.send_message(
-                msg.chat.id,
-                Command::descriptions()
-                ).send().await?;
-            }, 
-    
+            Ok(Command::Help) | Ok(Command::Start) => {
+                bot.send_message(msg.chat.id, Command::descriptions())
+                    .send()
+                    .await?;
+            }
+
             Ok(Command::Random(option_list)) => {
-                bot.send_message(
-                msg.chat.id,
-                misc::random::reply(option_list)
-                ).send().await?;
-            },
-    
+                bot.send_message(msg.chat.id, misc::random::reply(option_list))
+                    .send()
+                    .await?;
+            }
+
             Ok(Command::Shuffle(option_list)) => {
-                bot.send_message(
-                msg.chat.id,
-                misc::shuffle::reply(option_list)
-                ).send().await?;
-            },
-    
+                bot.send_message(msg.chat.id, misc::shuffle::reply(option_list))
+                    .send()
+                    .await?;
+            }
+
             Ok(Command::Tell(question_options)) => {
-                bot.send_message(
-                msg.chat.id,
-                misc::tell::reply(question_options)
-                ).send().await?;
-            },
+                bot.send_message(msg.chat.id, misc::tell::reply(question_options))
+                    .send()
+                    .await?;
+            }
 
             Ok(Command::Lowercase(text)) => {
-                bot.send_message(
-                msg.chat.id,
-                misc::lowercase::reply(text)
-                ).send().await?;
-            },
+                bot.send_message(msg.chat.id, misc::lowercase::reply(text))
+                    .send()
+                    .await?;
+            }
 
             Ok(Command::Register) => {
-                bot.send_message(
-                msg.chat.id,
-                binance::register::reply()
-                ).parse_mode(MarkdownV2).send().await?;
-            },
-    
+                bot.send_message(msg.chat.id, binance::register::reply())
+                    .parse_mode(MarkdownV2)
+                    .send()
+                    .await?;
+            }
+
             Ok(Command::Price(crpytocurrency)) => {
-                bot.send_message(
-                msg.chat.id,
-                binance::price::reply(crpytocurrency)
-                ).send().await?;
-            },
+                bot.send_message(msg.chat.id, binance::price::reply(crpytocurrency))
+                    .send()
+                    .await?;
+            }
 
             Err(_) => {
                 match misc::default::reply() {
                     Some(button) => {
-                        bot
-                        .send_message(msg.chat.id, "mining reward")
-                        .reply_markup(button).await?;
-                    },
-                    None => {},
+                        bot.send_message(msg.chat.id, "mining reward")
+                            .reply_markup(button)
+                            .await?;
+                    }
+                    None => {}
                 };
             }
         };
